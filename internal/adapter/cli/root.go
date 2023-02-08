@@ -19,9 +19,6 @@ func NewRootCommand() *RootCommand {
 	}
 
 	rootCommand.cobraCmd.CompletionOptions.HiddenDefaultCmd = true
-	rootCommand.cobraCmd.SetHelpTemplate(
-		rootCommand.cobraCmd.HelpTemplate() +
-			"\n*Use environment variables (for example, REMOTE_URI) or request headers (for example, X-PROTTY-REMOTE-URI) to configure settings. The settings will be applied in the following priority: environment variables -> command flags -> request headers\n")
 
 	return rootCommand
 }

@@ -15,7 +15,7 @@ import (
 
 type ReverseProxyService struct {
 	reverseProxies map[string]*httputil.ReverseProxy
-	cfg            *config.Config
+	cfg            *config.StartCommandConfig
 	logger         *logrus.Logger
 }
 
@@ -24,16 +24,16 @@ func NewReverseProxyService(logger *logrus.Logger) *ReverseProxyService {
 	return s
 }
 
-func (s *ReverseProxyService) Start(cfg *config.Config) error {
+func (s *ReverseProxyService) Start(cfg *config.StartCommandConfig) error {
 	s.cfg = cfg
 
 	http.HandleFunc("/", s.handleRequestAndRedirect)
 
-	s.logger.Infof("Start listenprottying on :%d port with config: %+v", s.cfg.LocalPort.Value, s.cfg)
+	s.logger.Infof("Start listen proxy on :%d port with config: %+v", s.cfg.LocalPort.Value, s.cfg)
 	return http.ListenAndServe(fmt.Sprintf(":%d", s.cfg.LocalPort.Value), nil)
 }
 
-// Serve a reverse protty for a given url
+// Serve a reverse proxy for a given url
 func (s *ReverseProxyService) serveReverseProxy(res http.ResponseWriter, req *http.Request) {
 	cfg := s.getOverrideConfig(req)
 
@@ -55,7 +55,7 @@ func (s *ReverseProxyService) handleRequestAndRedirect(res http.ResponseWriter, 
 	s.logRequestPayload(req)
 }
 
-func (s *ReverseProxyService) getOverrideConfig(req *http.Request) *config.Config {
+func (s *ReverseProxyService) getOverrideConfig(req *http.Request) *config.StartCommandConfig {
 	cfg := *s.cfg
 
 	// TODO Refactor to dynamic configuring based on the cfg.Range(f func()) function
@@ -85,7 +85,7 @@ func (s *ReverseProxyService) getOverrideConfig(req *http.Request) *config.Confi
 	return &cfg
 }
 
-func (s *ReverseProxyService) getReverseProxyByParams(cfg *config.Config) *httputil.ReverseProxy {
+func (s *ReverseProxyService) getReverseProxyByParams(cfg *config.StartCommandConfig) *httputil.ReverseProxy {
 	var reverseProxy *httputil.ReverseProxy
 	var ok bool
 	reverseProxyKey := fmt.Sprintf("%s-%f-%s", cfg.RemoteURI, cfg.ThrottleRateLimit, cfg.ThrottleHost)

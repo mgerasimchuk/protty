@@ -9,8 +9,8 @@ FROM alpine:3.17.0
 
 RUN apk --no-cache add ca-certificates
 
-COPY --from=builder /app/bin/protty /protty
+COPY --from=builder /app/bin/protty /bin/protty
 
 EXPOSE 80
 
-CMD ["/protty", "start"]
+CMD ["protty", "start"]

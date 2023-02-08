@@ -18,41 +18,28 @@ These capabilities make Protty a useful tool for a variety of purposes, such as 
 The following command will start a proxy on port 8080, and after starting, all traffic from port 8080 will be redirected to a remote host located at https://example.com
 
 ```shell
-docker run -p8080:80 -e REMOTE_URI=https://example.com:443 mgerasimchuk/protty:v0.0.1
+docker run -p8080:80 -e REMOTE_URI=https://example.com:443 mgerasimchuk/protty:v0.0.2
 ```
 
-## Custom configuration
-
-Define the following settings to configure protty.
-
-| Option            | Description                                                     | Env variable        | Flag                | Request Header               | Optional | Default             |
-|-------------------|-----------------------------------------------------------------|---------------------|---------------------|------------------------------|:--------:|---------------------|
-| LocalPort         | Verbosity level (panic, fatal, error, warn, info, debug, trace) | LOCAL_PORT          | local-port          | X-PROTTY-LOCAL-PORT          |   yes    | 80                  |
-| RemoteURI         | Listening port for the proxy                                    | REMOTE_URI          | remote-uri          | X-PROTTY-REMOTE-URI          |   yes    | https://example.com |
-| ThrottleRateLimit | URI of the remote resource                                      | THROTTLE_RATE_LIMIT | throttle-rate-limit | X-PROTTY-THROTTLE-RATE-LIMIT |   yes    |                     |
-| ThrottleHost      | How many requests can be send to the remote resource per second | THROTTLE_HOST       | throttle-host       | X-PROTTY-THROTTLE-HOST       |   yes    |                     |
-| LogLevel          | On which host, the throttle rate limit should be applied        | LOG_LEVEL           | log-level           | X-PROTTY-LOG-LEVEL           |   yes    | debug               |
-
-Use environment variables or application flags or request headers to configure the app.
-
-The settings will be applied in the following priority: environment variables -> command flags -> request headers
-
-You can also get the full list of available commands and flags by using the help:
+## Running options and runtime configuration
 
 ```
-» ~  docker run -it mgerasimchuk/protty:v0.0.1 /bin/sh -c '/protty start --help'  
+» ~  docker run -it mgerasimchuk/protty:v0.0.2 /bin/sh -c 'protty start --help'  
 Start the proxy
 
 Usage:
   protty start [flags]
 
+Examples:
+  protty start --remote-uri https://www.githubstatus.com --throttle-rate-limit 2
+
 Flags:
-      --log-level string            Verbosity level (panic, fatal, error, warn, info, debug, trace) (default "debug")
-      --local-port int              Listening port for the proxy (default 80)
-      --remote-uri string           URI of the remote resource (default "https://example.com:443")
-      --throttle-rate-limit float   How many requests can be send to the remote resource per second
-      --throttle-host string        On which host, the throttle rate limit should be applied
+      --log-level string            On which host, the throttle rate limit should be applied | Env variable alias: LOG_LEVEL | Request header alias: X-PROTTY-LOG-LEVEL (default "debug")
+      --local-port int              Verbosity level (panic, fatal, error, warn, info, debug, trace) | Env variable alias: LOCAL_PORT | Request header alias: X-PROTTY-LOCAL-PORT (default 80)
+      --remote-uri string           Listening port for the proxy | Env variable alias: REMOTE_URI | Request header alias: X-PROTTY-REMOTE-URI (default "https://example.com:443")
+      --throttle-rate-limit float   URI of the remote resource | Env variable alias: THROTTLE_RATE_LIMIT | Request header alias: X-PROTTY-THROTTLE-RATE-LIMIT
+      --throttle-host string        How many requests can be send to the remote resource per second | Env variable alias: THROTTLE_HOST | Request header alias: X-PROTTY-THROTTLE-HOST
   -h, --help                        help for start
 
-*Use environment variables (for example, REMOTE_URI) or request headers (for example, X-PROTTY-REMOTE-URI) to configure settings. The settings will be applied in the following priority: environment variables -> command flags -> request headers
+*Use CLI flags, environment variables or request headers to configure settings. The settings will be applied in the following priority: environment variables -> CLI flags -> request headers
 ```

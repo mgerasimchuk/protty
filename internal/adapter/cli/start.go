@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
 	"os"
 	"protty/internal/infrastructure/config"
@@ -10,10 +11,10 @@ import (
 type StartCommand struct {
 	cobraCmd        *cobra.Command
 	reverseProxySvc *service.ReverseProxyService
-	cfg             *config.Config
+	cfg             *config.StartCommandConfig
 }
 
-func NewStartCommand(cfg *config.Config, reverseProxySvc *service.ReverseProxyService) *StartCommand {
+func NewStartCommand(cfg *config.StartCommandConfig, reverseProxySvc *service.ReverseProxyService, parentCommand *cobra.Command) *StartCommand {
 	startCommand := &StartCommand{
 		reverseProxySvc: reverseProxySvc,
 		cfg:             cfg,
@@ -26,12 +27,24 @@ func NewStartCommand(cfg *config.Config, reverseProxySvc *service.ReverseProxySe
 		RunE:    startCommand.runE,
 	}
 
+	parentCommand.AddCommand(startCommand.GetCobraCommand())
+
 	startCommand.cobraCmd.Flags().SortFlags = false
-	startCommand.cobraCmd.Flags().StringVar(&cfg.LogLevel.Value, "log-level", cfg.LogLevel.Value, "Verbosity level (panic, fatal, error, warn, info, debug, trace)")
-	startCommand.cobraCmd.Flags().IntVar(&cfg.LocalPort.Value, "local-port", cfg.LocalPort.Value, "Listening port for the proxy")
-	startCommand.cobraCmd.Flags().StringVar(&cfg.RemoteURI.Value, "remote-uri", cfg.RemoteURI.Value, "URI of the remote resource")
-	startCommand.cobraCmd.Flags().Float64Var(&cfg.ThrottleRateLimit.Value, "throttle-rate-limit", cfg.ThrottleRateLimit.Value, "How many requests can be send to the remote resource per second")
-	startCommand.cobraCmd.Flags().StringVar(&cfg.ThrottleHost.Value, "throttle-host", cfg.ThrottleHost.Value, "On which host, the throttle rate limit should be applied")
+	startCommand.cobraCmd.Flags().StringVar(buildFlagArgs(cfg.LogLevel))
+	startCommand.cobraCmd.Flags().IntVar(buildFlagArgs(cfg.LocalPort))
+	startCommand.cobraCmd.Flags().StringVar(buildFlagArgs(cfg.RemoteURI))
+	startCommand.cobraCmd.Flags().Float64Var(buildFlagArgs(cfg.ThrottleRateLimit))
+	startCommand.cobraCmd.Flags().StringVar(buildFlagArgs(cfg.ThrottleHost))
+
+	startCommand.cobraCmd.Example = fmt.Sprintf("  %s --%s https://www.githubstatus.com --%s 2",
+		startCommand.cobraCmd.CommandPath(), cfg.RemoteURI.GetFlagName(), cfg.ThrottleRateLimit.GetFlagName())
+
+	startCommand.cobraCmd.IsAdditionalHelpTopicCommand()
+
+	startCommand.cobraCmd.SetHelpTemplate(
+		startCommand.cobraCmd.HelpTemplate() +
+			"\n*Use CLI flags, environment variables or request headers to configure settings. " +
+			"The settings will be applied in the following priority: environment variables -> CLI flags -> request headers\n")
 
 	return startCommand
 }
@@ -54,4 +67,9 @@ func (c *StartCommand) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	return c.reverseProxySvc.Start(c.cfg)
+}
+
+func buildFlagArgs[T config.OptionValueType](o config.Option[T]) (*T, string, T, string) {
+	description := o.Description + fmt.Sprintf(" | Env variable alias: %s | Request header alias: %s", o.GetEnvName(), o.GetHeaderName())
+	return &o.Value, o.GetFlagName(), o.Value, description
 }

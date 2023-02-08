@@ -7,16 +7,13 @@ import (
 	"protty/internal/infrastructure/service"
 )
 
-func Start(cfg *config.Config) {
+func Start(cfg *config.StartCommandConfig) {
 	logger := logrus.New()
 	logger.SetLevel(cfg.GetLogLevelLogrus())
 	logger.SetFormatter(&logrus.JSONFormatter{})
 
 	rootCmd := cli.NewRootCommand()
 	reverseProxySvc := service.NewReverseProxyService(logger)
-	startCmd := cli.NewStartCommand(cfg, reverseProxySvc)
-
-	rootCmd.GetCobraCommand().AddCommand(startCmd.GetCobraCommand())
-
+	cli.NewStartCommand(cfg, reverseProxySvc, rootCmd.GetCobraCommand())
 	_ = rootCmd.GetCobraCommand().Execute()
 }
