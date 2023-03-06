@@ -18,13 +18,13 @@ These capabilities make Protty a useful tool for a variety of purposes, such as 
 The following command will start a proxy on port 8080, and after starting, all traffic from port 8080 will be redirected to a remote host located at https://example.com
 
 ```shell
-docker run -p8080:80 -e REMOTE_URI=https://example.com:443 mgerasimchuk/protty:v0.0.2
+docker run -p8080:80 -e REMOTE_URI=https://example.com:443 mgerasimchuk/protty:v0.1.0
 ```
 
 ## Running options and runtime configuration
 
 ```
-» ~  docker run -it mgerasimchuk/protty:v0.0.2 /bin/sh -c 'protty start --help'  
+» ~  docker run -p8080:80 -it mgerasimchuk/protty:v0.1.0 /bin/sh -c 'protty start --help'  
 Start the proxy
 
 Usage:
@@ -43,3 +43,8 @@ Flags:
 
 *Use CLI flags, environment variables or request headers to configure settings. The settings will be applied in the following priority: environment variables -> CLI flags -> request headers
 ```
+
+## Dependencies
+
+- SED implementation - https://github.com/rwtodd/Go.Sed/tree/55464686f9ef25a9d147120ab1f7f489eae471fd
+- JQ implementation - https://github.com/itchyny/gojq/tree/v0.12.11
