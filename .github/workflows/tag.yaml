@@ -23,12 +23,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: mgerasimchuk/protty:${{ github.ref_name }}
-      - name: Docker Hub Description
-        uses: peter-evans/dockerhub-description@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          repository: mgerasimchuk/protty
   docker-publish-readme:
     runs-on: ubuntu-22.04
     needs: docker-release
