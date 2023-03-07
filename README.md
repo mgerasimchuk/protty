@@ -3,7 +3,7 @@
 ----
 
 <p align="center">
-  <img height="250" alt="PROTTY" src="assets/logo/logo.png"/>
+  <img height="250" alt="PROTTY" src="https://github.com/mgerasimchuk/protty/raw/master/assets/logo/logo.png"/>
 </p>
 
 ----
@@ -18,28 +18,53 @@ These capabilities make Protty a useful tool for a variety of purposes, such as 
 The following command will start a proxy on port 8080, and after starting, all traffic from port 8080 will be redirected to a remote host located at https://example.com
 
 ```shell
-docker run -p8080:80 -e REMOTE_URI=https://example.com:443 mgerasimchuk/protty:v0.1.0
+docker run -p8080:80 -e REMOTE_URI=https://example.com:443 mgerasimchuk/protty:v0.2.0
 ```
 
 ## Running options and runtime configuration
 
 ```
-» ~  docker run -p8080:80 -it mgerasimchuk/protty:v0.1.0 /bin/sh -c 'protty start --help'  
+» ~  docker run -p8080:80 -it mgerasimchuk/protty:v0.2.0 /bin/sh -c 'protty start --help'  
 Start the proxy
 
 Usage:
   protty start [flags]
 
 Examples:
+  # Start the proxy with default values
+  protty start
+  
+  # Start the proxy with specific log level
+  protty start --log-level info
+
+  # Start the proxy with a specific local port
+  protty start --local-port 8080
+  
+  # Start the proxy with a specific remote URI and specific throttle rate limit 
   protty start --remote-uri https://www.githubstatus.com --throttle-rate-limit 2
 
+  # Start the proxy with a specific SED expression for response transformation
+  protty start --transform-response-body-sed 's|old|new|g'
+
+  # Start the proxy with a specific SED expressions pipeline for response transformation
+  protty start --transform-response-body-sed 's|old|new-stage-1|g' --transform-response-body-sed 's|new-stage-1|new-stage-2|g'
+
+  # Start the proxy with a specific SED expressions pipeline for response transformation (configured with env)
+  TRANSFORM_RESPONSE_BODY_SED_0='s|old|new-stage-1|g' TRANSFORM_RESPONSE_BODY_SED_1='s|new-stage-1|new-stage-2|g' protty start
+
+  # Start the proxy with a specific JQ expressions pipeline for response transformation
+  protty start --transform-response-body-jq '.[] | .id'
+
 Flags:
-      --log-level string            On which host, the throttle rate limit should be applied | Env variable alias: LOG_LEVEL | Request header alias: X-PROTTY-LOG-LEVEL (default "debug")
-      --local-port int              Verbosity level (panic, fatal, error, warn, info, debug, trace) | Env variable alias: LOCAL_PORT | Request header alias: X-PROTTY-LOCAL-PORT (default 80)
-      --remote-uri string           Listening port for the proxy | Env variable alias: REMOTE_URI | Request header alias: X-PROTTY-REMOTE-URI (default "https://example.com:443")
-      --throttle-rate-limit float   URI of the remote resource | Env variable alias: THROTTLE_RATE_LIMIT | Request header alias: X-PROTTY-THROTTLE-RATE-LIMIT
-      --throttle-host string        How many requests can be send to the remote resource per second | Env variable alias: THROTTLE_HOST | Request header alias: X-PROTTY-THROTTLE-HOST
-  -h, --help                        help for start
+      --log-level string                          On which host, the throttle rate limit should be applied | Env variable alias: LOG_LEVEL | Request header alias: X-PROTTY-LOG-LEVEL (default "debug")
+      --local-port int                            Verbosity level (panic, fatal, error, warn, info, debug, trace) | Env variable alias: LOCAL_PORT | Request header alias: X-PROTTY-LOCAL-PORT (default 80)
+      --remote-uri string                         Listening port for the proxy | Env variable alias: REMOTE_URI | Request header alias: X-PROTTY-REMOTE-URI (default "https://example.com:443")
+      --throttle-rate-limit float                 How many requests can be send to the remote resource per second | Env variable alias: THROTTLE_RATE_LIMIT | Request header alias: X-PROTTY-THROTTLE-RATE-LIMIT
+      --transform-request-body-sed stringArray    Pipeline of SED expressions for request body transformation | Env variable alias: TRANSFORM_REQUEST_BODY_SED | Request header alias: X-PROTTY-TRANSFORM-REQUEST-BODY-SED
+      --transform-request-body-jq stringArray     Pipeline of JQ expressions for request body transformation | Env variable alias: TRANSFORM_REQUEST_BODY_JQ | Request header alias: X-PROTTY-TRANSFORM-REQUEST-BODY-JQ
+      --transform-response-body-sed stringArray   Pipeline of SED expressions for response body transformation | Env variable alias: TRANSFORM_RESPONSE_BODY_SED | Request header alias: X-PROTTY-TRANSFORM-RESPONSE-BODY-SED
+      --transform-response-body-jq stringArray    Pipeline of JQ expressions for response body transformation | Env variable alias: TRANSFORM_RESPONSE_BODY_JQ | Request header alias: X-PROTTY-TRANSFORM-RESPONSE-BODY-JQ
+  -h, --help                                      help for start
 
 *Use CLI flags, environment variables or request headers to configure settings. The settings will be applied in the following priority: environment variables -> CLI flags -> request headers
 ```

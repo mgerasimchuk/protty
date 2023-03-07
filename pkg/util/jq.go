@@ -9,6 +9,10 @@ import (
 // JQ transform the input by jq expression
 // in the error case returns the original input
 func JQ(jqExpr string, input []byte) ([]byte, []byte, error) {
+	if len(input) == 0 {
+		return input, input, nil
+	}
+
 	query, err := gojq.Parse(jqExpr)
 	if err != nil {
 		return input, input, fmt.Errorf("%s: %w", GetFuncName(gojq.Parse), err)

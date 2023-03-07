@@ -36,6 +36,8 @@ func NewStartCommand(cfg *config.StartCommandConfig, reverseProxySvc *service.Re
 	startCommand.cobraCmd.Flags().IntVar(buildFlagArgs(&cfg.LocalPort))
 	startCommand.cobraCmd.Flags().StringVar(buildFlagArgs(&cfg.RemoteURI))
 	startCommand.cobraCmd.Flags().Float64Var(buildFlagArgs(&cfg.ThrottleRateLimit))
+	startCommand.cobraCmd.Flags().StringArrayVar(buildFlagArgs(&cfg.TransformRequestBodySED))
+	startCommand.cobraCmd.Flags().StringArrayVar(buildFlagArgs(&cfg.TransformRequestBodyJQ))
 	startCommand.cobraCmd.Flags().StringArrayVar(buildFlagArgs(&cfg.TransformResponseBodySED))
 	startCommand.cobraCmd.Flags().StringArrayVar(buildFlagArgs(&cfg.TransformResponseBodyJQ))
 
@@ -77,7 +79,7 @@ func (c *StartCommand) getExamples() string {
 
   # Start the proxy with a specific SED expression for response transformation
   {{ .Cmd.CommandPath }} --{{ .Cfg.TransformResponseBodySED.GetFlagName }} 's|old|new|g'
-	
+
   # Start the proxy with a specific SED expressions pipeline for response transformation
   {{ .Cmd.CommandPath }} --{{ .Cfg.TransformResponseBodySED.GetFlagName }} 's|old|new-stage-1|g' --{{ .Cfg.TransformResponseBodySED.GetFlagName }} 's|new-stage-1|new-stage-2|g'
 
@@ -85,8 +87,7 @@ func (c *StartCommand) getExamples() string {
   {{ .Cfg.TransformResponseBodySED.GetEnvName }}_0='s|old|new-stage-1|g' {{ .Cfg.TransformResponseBodySED.GetEnvName }}_1='s|new-stage-1|new-stage-2|g' {{ .Cmd.CommandPath }}
 
   # Start the proxy with a specific JQ expressions pipeline for response transformation
-  {{ .Cmd.CommandPath }} --{{ .Cfg.TransformResponseBodyJQ.GetFlagName }} '.[] | .id'
-`
+  {{ .Cmd.CommandPath }} --{{ .Cfg.TransformResponseBodyJQ.GetFlagName }} '.[] | .id'`
 
 	t, b := new(template.Template), new(strings.Builder)
 	err := template.Must(t.Parse(textTemplate)).Execute(b, struct {

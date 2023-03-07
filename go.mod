@@ -8,6 +8,7 @@ require (
 	github.com/rwtodd/Go.Sed v0.0.0-20210816025313-55464686f9ef
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
+	github.com/thoas/go-funk v0.9.3
 	golang.org/x/time v0.3.0
 )
 

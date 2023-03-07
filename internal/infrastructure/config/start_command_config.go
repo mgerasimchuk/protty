@@ -19,8 +19,10 @@ type StartCommandConfig struct {
 	LocalPort                Option[int]      `default:"80" description:"Verbosity level (panic, fatal, error, warn, info, debug, trace)"`
 	RemoteURI                Option[string]   `default:"https://example.com:443" description:"Listening port for the proxy"`
 	ThrottleRateLimit        Option[float64]  `description:"How many requests can be send to the remote resource per second"`
-	TransformResponseBodySED Option[[]string] `description:"Pipeline of SED expressions for response transformation"`
-	TransformResponseBodyJQ  Option[[]string] `description:"Pipeline of JQ expressions for response transformation"`
+	TransformRequestBodySED  Option[[]string] `description:"Pipeline of SED expressions for request body transformation"`
+	TransformRequestBodyJQ   Option[[]string] `description:"Pipeline of JQ expressions for request body transformation"`
+	TransformResponseBodySED Option[[]string] `description:"Pipeline of SED expressions for response body transformation"`
+	TransformResponseBodyJQ  Option[[]string] `description:"Pipeline of JQ expressions for response body transformation"`
 }
 
 func GetStartCommandConfig() *StartCommandConfig {

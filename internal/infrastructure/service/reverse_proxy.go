@@ -50,17 +50,48 @@ func (s *ReverseProxyService) logRequestPayload(req *http.Request) {
 // Serve a reverse proxy for a given url
 func (s *ReverseProxyService) serveReverseProxy(res http.ResponseWriter, req *http.Request) {
 	cfg := s.getOverrideConfig(req)
-
-	host := strings.ReplaceAll(strings.ReplaceAll(cfg.RemoteURI.Value, "https://", ""), "http://", "")
-	req.URL.Host = host
-	req.Host = host
-
 	reverseProxy := s.getReverseProxyByParams(*cfg)
+	s.modifyRequest(*cfg, req)
+	reverseProxy.ServeHTTP(res, req)
+}
 
+func (s *ReverseProxyService) modifyRequest(cfg config.StartCommandConfig, req *http.Request) {
+	host := strings.ReplaceAll(strings.ReplaceAll(cfg.RemoteURI.Value, "https://", ""), "http://", "")
+	req.Host, req.URL.Host = host, host
 	// Deleting encoding to keep availability for changing response
 	req.Header.Del("Accept-Encoding")
 
-	reverseProxy.ServeHTTP(res, req)
+	sourceRequestBody, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(ioutil.ReadAll), err)
+		return
+	}
+	if err = req.Body.Close(); err != nil {
+		s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(req.Body.Close), err)
+		return
+	}
+
+	modifiedRequestBody := sourceRequestBody
+
+	for _, sedExpr := range cfg.TransformRequestBodySED.Value {
+		modifiedRequestBody, sourceRequestBody, err = util.SED(sedExpr, modifiedRequestBody)
+		if err != nil {
+			s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(util.SED), err)
+			return
+		}
+		s.logger.Debugf("ModifyRequestBody: %s", getChangesLogMessage(sourceRequestBody, modifiedRequestBody, sedExpr, cfg.TransformRequestBodySED))
+	}
+	for _, jqExpr := range cfg.TransformRequestBodyJQ.Value {
+		modifiedRequestBody, sourceRequestBody, err = util.JQ(jqExpr, modifiedRequestBody)
+		if err != nil {
+			s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(util.JQ), err)
+			return
+		}
+		s.logger.Debugf("ModifyRequestBody: %s", getChangesLogMessage(sourceRequestBody, modifiedRequestBody, jqExpr, cfg.TransformRequestBodySED))
+	}
+
+	req.Body = ioutil.NopCloser(bytes.NewBuffer(modifiedRequestBody))
+	req.ContentLength = int64(len(modifiedRequestBody))
 }
 
 func (s *ReverseProxyService) getReverseProxyByParams(cfg config.StartCommandConfig) *httputil.ReverseProxy {
@@ -84,38 +115,42 @@ func (s *ReverseProxyService) getReverseProxyByParams(cfg config.StartCommandCon
 
 func (s *ReverseProxyService) getModifyResponseFunc(cfg config.StartCommandConfig) func(resp *http.Response) error {
 	return func(resp *http.Response) error {
-		sourceResponse, err := ioutil.ReadAll(resp.Body)
+		sourceResponseBody, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(ioutil.ReadAll), err)
 			return nil
 		}
-		resp.Body.Close()
-		modifiedResponse := sourceResponse
+		if err = resp.Body.Close(); err != nil {
+			s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(resp.Body.Close), err)
+			return nil
+		}
+
+		modifiedResponseBody := sourceResponseBody
 
 		for _, sedExpr := range cfg.TransformResponseBodySED.Value {
-			modifiedResponse, sourceResponse, err = util.SED(sedExpr, modifiedResponse)
+			modifiedResponseBody, sourceResponseBody, err = util.SED(sedExpr, modifiedResponseBody)
 			if err != nil {
 				s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(util.SED), err)
 				return nil
 			}
-			s.logger.Debugf("ModifyResponse: %s", getChangesLogMessage(sourceResponse, modifiedResponse, sedExpr, cfg.TransformResponseBodySED))
+			s.logger.Debugf("ModifyResponseBody: %s", getChangesLogMessage(sourceResponseBody, modifiedResponseBody, sedExpr, cfg.TransformResponseBodySED))
 		}
 		for _, jqExpr := range cfg.TransformResponseBodyJQ.Value {
-			modifiedResponse, sourceResponse, err = util.JQ(jqExpr, modifiedResponse)
+			modifiedResponseBody, sourceResponseBody, err = util.JQ(jqExpr, modifiedResponseBody)
 			if err != nil {
 				s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(util.JQ), err)
 				return nil
 			}
-			s.logger.Debugf("ModifyResponse: %s", getChangesLogMessage(sourceResponse, modifiedResponse, jqExpr, cfg.TransformResponseBodyJQ))
+			s.logger.Debugf("ModifyResponseBody: %s", getChangesLogMessage(sourceResponseBody, modifiedResponseBody, jqExpr, cfg.TransformResponseBodyJQ))
 		}
 
 		buf := bytes.NewBufferString("")
-		buf.Write(modifiedResponse)
+		buf.Write(modifiedResponseBody)
 		resp.Body = ioutil.NopCloser(buf)
 
-		resp.Body = ioutil.NopCloser(bytes.NewBuffer(modifiedResponse))
-		resp.Header["Content-Length"] = []string{strconv.Itoa(len(modifiedResponse))}
-		resp.ContentLength = int64(len(modifiedResponse))
+		resp.Body = ioutil.NopCloser(bytes.NewBuffer(modifiedResponseBody))
+		resp.Header["Content-Length"] = []string{strconv.Itoa(len(modifiedResponseBody))}
+		resp.ContentLength = int64(len(modifiedResponseBody))
 		return nil
 	}
 }
