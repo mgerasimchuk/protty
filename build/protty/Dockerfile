@@ -3,7 +3,7 @@ FROM golang:1.18.9-alpine3.17 as builder
 WORKDIR /app
 COPY . .
 
-RUN GOSUMDB=off CGO_ENABLED=0 GOOS=linux go build -mod=vendor -a -o bin/protty cmd/protty/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -o bin/protty cmd/protty/main.go
 
 FROM alpine:3.17.0
 

@@ -1,0 +1,42 @@
+name: "Release a tag"
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  docker-release:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to docker.io
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Build and publish
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: build/protty/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: mgerasimchuk/protty:${{ github.ref_name }}
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: mgerasimchuk/protty
+  docker-publish-readme:
+    runs-on: ubuntu-22.04
+    needs: docker-release
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: mgerasimchuk/protty
