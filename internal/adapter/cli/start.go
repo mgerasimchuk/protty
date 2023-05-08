@@ -36,6 +36,7 @@ func NewStartCommand(cfg *config.StartCommandConfig, reverseProxySvc *service.Re
 	startCommand.cobraCmd.Flags().IntVar(buildFlagArgs(&cfg.LocalPort))
 	startCommand.cobraCmd.Flags().StringVar(buildFlagArgs(&cfg.RemoteURI))
 	startCommand.cobraCmd.Flags().Float64Var(buildFlagArgs(&cfg.ThrottleRateLimit))
+	startCommand.cobraCmd.Flags().StringVar(buildFlagArgs(&cfg.TransformRequestUrlSED))
 	startCommand.cobraCmd.Flags().StringArrayVar(buildFlagArgs(&cfg.AdditionalRequestHeaders))
 	startCommand.cobraCmd.Flags().StringArrayVar(buildFlagArgs(&cfg.TransformRequestBodySED))
 	startCommand.cobraCmd.Flags().StringArrayVar(buildFlagArgs(&cfg.TransformRequestBodyJQ))

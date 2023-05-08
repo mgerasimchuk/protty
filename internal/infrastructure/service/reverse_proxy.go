@@ -38,12 +38,12 @@ func (s *ReverseProxyService) Start(cfg *config.StartCommandConfig) error {
 }
 
 func (s *ReverseProxyService) handleRequestAndRedirect(res http.ResponseWriter, req *http.Request) {
-	s.logRequestPayload(req)
 	s.serveReverseProxy(res, req)
+	s.logRequestPayload(req)
 }
 
 func (s *ReverseProxyService) logRequestPayload(req *http.Request) {
-	s.logger.WithField("method", req.Method).WithField("path", req.URL.Path).Infof("Send request to %s", req.URL.Host)
+	s.logger.WithField("method", req.Method).WithField("path", req.URL.Path).Infof("Request have been sent to %s", req.URL.Host)
 	// TODO add tracing log with body and other params like headers
 }
 
@@ -60,6 +60,22 @@ func (s *ReverseProxyService) modifyRequest(cfg config.StartCommandConfig, req *
 	req.Host, req.URL.Host = host, host
 	// Deleting encoding to keep availability for changing response
 	req.Header.Del("Accept-Encoding")
+
+	// Transform request URL
+	if cfg.TransformRequestUrlSED.Value != "" {
+		if modifiedURLRaw, _, err := util.SED(cfg.TransformRequestUrlSED.Value, []byte(req.URL.String())); err == nil {
+			sourceURLRaw := req.URL.String()
+			if modifiedURL, err := url.Parse(strings.Trim(string(modifiedURLRaw), "\n")); err == nil { // TODO remove trim (currently it is a hotfix, cos the util.SED added \n at the end unexpectedly)
+				req.URL = modifiedURL
+				s.logger.Debugf("ModifyRequestURL: %s", getChangesLogMessage([]byte(sourceURLRaw), modifiedURLRaw, cfg.TransformRequestUrlSED.Value, cfg.TransformRequestUrlSED))
+			} else {
+				s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(url.Parse), err)
+				return
+			}
+		} else {
+			s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(util.SED), err)
+		}
+	}
 
 	// Add request headers
 	for _, header := range cfg.AdditionalRequestHeaders.Value {
@@ -83,6 +99,7 @@ func (s *ReverseProxyService) modifyRequest(cfg config.StartCommandConfig, req *
 
 	modifiedRequestBody := sourceRequestBody
 
+	// Transform request body with SED
 	for _, sedExpr := range cfg.TransformRequestBodySED.Value {
 		modifiedRequestBody, sourceRequestBody, err = util.SED(sedExpr, modifiedRequestBody)
 		if err != nil {
@@ -91,6 +108,8 @@ func (s *ReverseProxyService) modifyRequest(cfg config.StartCommandConfig, req *
 		}
 		s.logger.Debugf("ModifyRequestBody: %s", getChangesLogMessage(sourceRequestBody, modifiedRequestBody, sedExpr, cfg.TransformRequestBodySED))
 	}
+
+	// Transform request body with JQ
 	for _, jqExpr := range cfg.TransformRequestBodyJQ.Value {
 		modifiedRequestBody, sourceRequestBody, err = util.JQ(jqExpr, modifiedRequestBody)
 		if err != nil {
@@ -137,6 +156,7 @@ func (s *ReverseProxyService) getModifyResponseFunc(cfg config.StartCommandConfi
 
 		modifiedResponseBody := sourceResponseBody
 
+		// Transform response body with SED
 		for _, sedExpr := range cfg.TransformResponseBodySED.Value {
 			modifiedResponseBody, sourceResponseBody, err = util.SED(sedExpr, modifiedResponseBody)
 			if err != nil {
@@ -145,6 +165,8 @@ func (s *ReverseProxyService) getModifyResponseFunc(cfg config.StartCommandConfi
 			}
 			s.logger.Debugf("ModifyResponseBody: %s", getChangesLogMessage(sourceResponseBody, modifiedResponseBody, sedExpr, cfg.TransformResponseBodySED))
 		}
+
+		// Transform response body with SED
 		for _, jqExpr := range cfg.TransformResponseBodyJQ.Value {
 			modifiedResponseBody, sourceResponseBody, err = util.JQ(jqExpr, modifiedResponseBody)
 			if err != nil {
@@ -191,10 +213,10 @@ func (s *ReverseProxyService) getOverrideConfig(req *http.Request) *config.Start
 
 func getChangesLogMessage[T config.OptionValueType](source, modified []byte, expr string, o config.Option[T]) string {
 	if string(source) == string(modified) {
-		return fmt.Sprintf("the '%s' %s expression didn't change the response", expr, o.Name)
+		return fmt.Sprintf("the '%s' %s expression didn't change the data", expr, o.Name)
 	} else {
 		// TODO add diff to log
-		return fmt.Sprintf("the '%s' %s expression changed the response. Length difference: %d",
+		return fmt.Sprintf("the '%s' %s expression changed the data. Length difference: %d",
 			expr, o.Name, int(math.Abs(float64(len(source)-len(modified)))))
 	}
 }

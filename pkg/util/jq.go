@@ -9,7 +9,7 @@ import (
 // JQ transform the input by jq expression
 // in the error case returns the original input
 func JQ(jqExpr string, input []byte) ([]byte, []byte, error) {
-	if len(input) == 0 {
+	if len(input) == 0 || len(jqExpr) == 0 {
 		return input, input, nil
 	}
 

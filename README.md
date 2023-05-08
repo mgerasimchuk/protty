@@ -18,13 +18,13 @@ These capabilities make Protty a useful tool for a variety of purposes, such as 
 The following command will start a proxy on port 8080, and after starting, all traffic from port 8080 will be redirected to a remote host located at https://example.com
 
 ```shell
-docker run -p8080:80 -e REMOTE_URI=https://example.com:443 mgerasimchuk/protty:v0.3.0
+docker run -p8080:80 -e REMOTE_URI=https://example.com:443 mgerasimchuk/protty:v0.4.0
 ```
 
 ## Running options and runtime configuration
 
 ```
-» ~  docker run -p8080:80 -it mgerasimchuk/protty:v0.3.0 /bin/sh -c 'protty start --help'  
+» ~  docker run -p8080:80 -it mgerasimchuk/protty:v0.4.0 /bin/sh -c 'protty start --help'  
 Start the proxy
 
 Usage:
@@ -63,6 +63,7 @@ Flags:
       --local-port int                            Verbosity level (panic, fatal, error, warn, info, debug, trace) | Env variable alias: LOCAL_PORT | Request header alias: X-PROTTY-LOCAL-PORT (default 80)
       --remote-uri string                         Listening port for the proxy | Env variable alias: REMOTE_URI | Request header alias: X-PROTTY-REMOTE-URI (default "https://example.com:443")
       --throttle-rate-limit float                 How many requests can be send to the remote resource per second | Env variable alias: THROTTLE_RATE_LIMIT | Request header alias: X-PROTTY-THROTTLE-RATE-LIMIT
+      --transform-request-url-sed string          SED expression for request URL transformation | Env variable alias: TRANSFORM_REQUEST_URL_SED | Request header alias: X-PROTTY-TRANSFORM-REQUEST-URL-SED
       --additional-request-headers stringArray    Array of additional request headers in format Header: Value | Env variable alias: ADDITIONAL_REQUEST_HEADERS | Request header alias: X-PROTTY-ADDITIONAL-REQUEST-HEADERS
       --transform-request-body-sed stringArray    Pipeline of SED expressions for request body transformation | Env variable alias: TRANSFORM_REQUEST_BODY_SED | Request header alias: X-PROTTY-TRANSFORM-REQUEST-BODY-SED
       --transform-request-body-jq stringArray     Pipeline of JQ expressions for request body transformation | Env variable alias: TRANSFORM_REQUEST_BODY_JQ | Request header alias: X-PROTTY-TRANSFORM-REQUEST-BODY-JQ

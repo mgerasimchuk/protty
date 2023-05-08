@@ -19,6 +19,7 @@ type StartCommandConfig struct {
 	LocalPort                 Option[int]      `default:"80" description:"Verbosity level (panic, fatal, error, warn, info, debug, trace)"`
 	RemoteURI                 Option[string]   `default:"https://example.com:443" description:"Listening port for the proxy"`
 	ThrottleRateLimit         Option[float64]  `description:"How many requests can be send to the remote resource per second"`
+	TransformRequestUrlSED    Option[string]   `description:"SED expression for request URL transformation"`
 	AdditionalRequestHeaders  Option[[]string] `description:"Array of additional request headers in format Header: Value"`
 	TransformRequestBodySED   Option[[]string] `description:"Pipeline of SED expressions for request body transformation"`
 	TransformRequestBodyJQ    Option[[]string] `description:"Pipeline of JQ expressions for request body transformation"`
