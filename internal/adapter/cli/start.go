@@ -36,8 +36,10 @@ func NewStartCommand(cfg *config.StartCommandConfig, reverseProxySvc *service.Re
 	startCommand.cobraCmd.Flags().IntVar(buildFlagArgs(&cfg.LocalPort))
 	startCommand.cobraCmd.Flags().StringVar(buildFlagArgs(&cfg.RemoteURI))
 	startCommand.cobraCmd.Flags().Float64Var(buildFlagArgs(&cfg.ThrottleRateLimit))
+	startCommand.cobraCmd.Flags().StringArrayVar(buildFlagArgs(&cfg.AdditionalRequestHeaders))
 	startCommand.cobraCmd.Flags().StringArrayVar(buildFlagArgs(&cfg.TransformRequestBodySED))
 	startCommand.cobraCmd.Flags().StringArrayVar(buildFlagArgs(&cfg.TransformRequestBodyJQ))
+	startCommand.cobraCmd.Flags().StringArrayVar(buildFlagArgs(&cfg.AdditionalResponseHeaders))
 	startCommand.cobraCmd.Flags().StringArrayVar(buildFlagArgs(&cfg.TransformResponseBodySED))
 	startCommand.cobraCmd.Flags().StringArrayVar(buildFlagArgs(&cfg.TransformResponseBodyJQ))
 
@@ -76,6 +78,9 @@ func (c *StartCommand) getExamples() string {
   
   # Start the proxy with a specific remote URI and specific throttle rate limit 
   {{ .Cmd.CommandPath }} --{{ .Cfg.RemoteURI.GetFlagName }} https://www.githubstatus.com --{{ .Cfg.ThrottleRateLimit.GetFlagName }} 2
+
+  # Start the proxy with a specific additional request headers
+  {{ .Cmd.CommandPath }} --{{ .Cfg.AdditionalRequestHeaders.GetFlagName }} 'Authorization: Bearer authtoken-with:any:symbols' --{{ .Cfg.AdditionalRequestHeaders.GetFlagName }} 'X-Another-One: another-value'
 
   # Start the proxy with a specific SED expression for response transformation
   {{ .Cmd.CommandPath }} --{{ .Cfg.TransformResponseBodySED.GetFlagName }} 's|old|new|g'

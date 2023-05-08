@@ -15,14 +15,16 @@ import (
 )
 
 type StartCommandConfig struct {
-	LogLevel                 Option[string]   `default:"debug" description:"On which host, the throttle rate limit should be applied"`
-	LocalPort                Option[int]      `default:"80" description:"Verbosity level (panic, fatal, error, warn, info, debug, trace)"`
-	RemoteURI                Option[string]   `default:"https://example.com:443" description:"Listening port for the proxy"`
-	ThrottleRateLimit        Option[float64]  `description:"How many requests can be send to the remote resource per second"`
-	TransformRequestBodySED  Option[[]string] `description:"Pipeline of SED expressions for request body transformation"`
-	TransformRequestBodyJQ   Option[[]string] `description:"Pipeline of JQ expressions for request body transformation"`
-	TransformResponseBodySED Option[[]string] `description:"Pipeline of SED expressions for response body transformation"`
-	TransformResponseBodyJQ  Option[[]string] `description:"Pipeline of JQ expressions for response body transformation"`
+	LogLevel                  Option[string]   `default:"debug" description:"On which host, the throttle rate limit should be applied"`
+	LocalPort                 Option[int]      `default:"80" description:"Verbosity level (panic, fatal, error, warn, info, debug, trace)"`
+	RemoteURI                 Option[string]   `default:"https://example.com:443" description:"Listening port for the proxy"`
+	ThrottleRateLimit         Option[float64]  `description:"How many requests can be send to the remote resource per second"`
+	AdditionalRequestHeaders  Option[[]string] `description:"Array of additional request headers in format Header: Value"`
+	TransformRequestBodySED   Option[[]string] `description:"Pipeline of SED expressions for request body transformation"`
+	TransformRequestBodyJQ    Option[[]string] `description:"Pipeline of JQ expressions for request body transformation"`
+	AdditionalResponseHeaders Option[[]string] `description:"Array of additional response headers in format Header: Value"`
+	TransformResponseBodySED  Option[[]string] `description:"Pipeline of SED expressions for response body transformation"`
+	TransformResponseBodyJQ   Option[[]string] `description:"Pipeline of JQ expressions for response body transformation"`
 }
 
 func GetStartCommandConfig() *StartCommandConfig {

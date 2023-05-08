@@ -61,6 +61,16 @@ func (s *ReverseProxyService) modifyRequest(cfg config.StartCommandConfig, req *
 	// Deleting encoding to keep availability for changing response
 	req.Header.Del("Accept-Encoding")
 
+	// Add request headers
+	for _, header := range cfg.AdditionalRequestHeaders.Value {
+		kv := strings.SplitN(header, ": ", 2)
+		if len(kv) != 2 {
+			s.logger.Errorf("%s: %s: %s - %+v", util.GetCurrentFuncName(), util.GetFuncName(strings.SplitN), "returns not 2 values", kv)
+			continue
+		}
+		req.Header.Add(kv[0], kv[1])
+	}
+
 	sourceRequestBody, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(ioutil.ReadAll), err)
@@ -151,6 +161,17 @@ func (s *ReverseProxyService) getModifyResponseFunc(cfg config.StartCommandConfi
 		resp.Body = ioutil.NopCloser(bytes.NewBuffer(modifiedResponseBody))
 		resp.Header["Content-Length"] = []string{strconv.Itoa(len(modifiedResponseBody))}
 		resp.ContentLength = int64(len(modifiedResponseBody))
+
+		// Add response headers
+		for _, header := range cfg.AdditionalResponseHeaders.Value {
+			kv := strings.SplitN(header, ": ", 2)
+			if len(kv) != 2 {
+				s.logger.Errorf("%s: %s: %s - %+v", util.GetCurrentFuncName(), util.GetFuncName(strings.SplitN), "returns not 2 values", kv)
+				continue
+			}
+			resp.Header.Add(kv[0], kv[1])
+		}
+
 		return nil
 	}
 }
