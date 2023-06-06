@@ -11,7 +11,7 @@ func TestGetCurrentFuncName(t *testing.T) {
 		actual string
 		want   string
 	}{
-		{GetCurrentFuncName(), "szutil.TestGetCurrentFuncName"},
+		{GetCurrentFuncName(), "util.TestGetCurrentFuncName"},
 	}
 	for _, tt := range tests {
 		tt := tt

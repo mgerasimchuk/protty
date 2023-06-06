@@ -20,5 +20,9 @@ func SED(sedExpr string, input []byte) ([]byte, []byte, error) {
 	if err != nil {
 		return input, input, fmt.Errorf("%s: %w", GetFuncName(engine.RunString), err)
 	}
+	// remove last \n cos sed adds this by default
+	if !strings.HasSuffix(string(input), "\n") && strings.HasSuffix(output, "\n") {
+		output = output[:len(output)-1]
+	}
 	return []byte(output), input, nil
 }
