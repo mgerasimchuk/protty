@@ -77,5 +77,5 @@ Flags:
 
 ## Dependencies
 
-- SED implementation - https://github.com/rwtodd/Go.Sed/tree/55464686f9ef25a9d147120ab1f7f489eae471fd
+- SED implementation - https://github.com/rwtodd/Go.Sed/tree/ba3e9c1
 - JQ implementation - https://github.com/itchyny/gojq/tree/v0.12.11
