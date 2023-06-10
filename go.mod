@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/graze/go-throttled v0.3.1
 	github.com/itchyny/gojq v0.12.11
-	github.com/rwtodd/Go.Sed v0.0.0-20210816025313-55464686f9ef
+	github.com/rwtodd/Go.Sed v0.0.0-20230610052213-ba3e9c186f0a
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.7.0

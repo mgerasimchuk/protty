@@ -16,8 +16,16 @@ func TestSED_Success(t *testing.T) {
 		want string
 	}{
 		{
-			args{"New line can be replaced", "first line\nsecond line", `:a;N;$!ba;s/\n/,/g`},
-			"first line,second line",
+			args{"New line can be replaced", "first\nsecond\nthird", `:a;N;$!ba;s/\n/,/g`},
+			"first,second,third",
+		},
+		{
+			args{"New line can be replaced", "first\nsecond", `:a;N;$!ba;s/\n/,/g`},
+			"first,second",
+		},
+		{
+			args{"New line can be replaced", "first", `:a;N;$!ba;s/\n/,/g`},
+			"first",
 		},
 		{
 			args{"New line doesn't add at the end", "Hello sed", `s/sed/world/`},
