@@ -3,6 +3,7 @@ module protty
 go 1.20
 
 require (
+	github.com/facette/natsort v0.0.0-20181210072756-2cd4dd1e2dcb
 	github.com/graze/go-throttled v0.3.1
 	github.com/itchyny/gojq v0.12.11
 	github.com/rwtodd/Go.Sed v0.0.0-20230610052213-ba3e9c186f0a

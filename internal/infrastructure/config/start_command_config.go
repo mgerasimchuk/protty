@@ -3,6 +3,7 @@ package config
 import (
 	"crypto/md5"
 	"fmt"
+	"github.com/facette/natsort"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"net/url"
@@ -68,7 +69,9 @@ func (c *StartCommandConfig) SetFromEnv() error {
 
 		if optValueField.Kind() == reflect.Slice {
 			envValuesSlice := []string{}
-			for _, envPair := range os.Environ() {
+			sortedEnviron := os.Environ()
+			natsort.Sort(sortedEnviron)
+			for _, envPair := range sortedEnviron {
 				envPairSlice := strings.Split(envPair, "=")
 				eName, eVal := envPairSlice[0], envPairSlice[1]
 				if isMatch, _ := regexp.MatchString(envName+`(_\d+)?$`, eName); isMatch {
