@@ -14,7 +14,7 @@ func GetCurrentFuncName() string {
 	runtime.Callers(2, pc)
 
 	// convert string from "github.com/project/repo/main.(*StructType).FuncName" to string: "main.StructType.FuncName"
-	return regexp.MustCompile(".*/|\\(\\*|\\)").ReplaceAllString(runtime.FuncForPC(pc[0]).Name(), "")
+	return regexp.MustCompile(`.*/|\\(\\*|\\)`).ReplaceAllString(runtime.FuncForPC(pc[0]).Name(), "")
 }
 
 // GetTypeNameByObject returns type of the object in format: <package>.<type name>

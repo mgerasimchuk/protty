@@ -2,12 +2,10 @@ package cli
 
 import (
 	"github.com/spf13/cobra"
-	"protty/internal/infrastructure/service"
 )
 
 type RootCommand struct {
-	cobraCmd        *cobra.Command
-	reverseProxySvc *service.ReverseProxyService
+	cobraCmd *cobra.Command
 }
 
 func NewRootCommand() *RootCommand {

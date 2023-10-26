@@ -1,3 +1,6 @@
+[![Lint Golangci][lint-golangci-badge]][lint-golangci-url]
+[![Test Unit][test-unit-badge]][test-unit-url]
+
 # Protty
 
 ----
@@ -79,3 +82,11 @@ Flags:
 
 - SED implementation - https://github.com/rwtodd/Go.Sed/tree/ba3e9c1
 - JQ implementation - https://github.com/itchyny/gojq/tree/v0.12.11
+
+[lint-golangci-badge]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-golangci.yml/badge.svg
+
+[lint-golangci-url]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-golangci.yml
+
+[test-unit-badge]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-unit.yml/badge.svg
+
+[test-unit-url]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-unit.yml

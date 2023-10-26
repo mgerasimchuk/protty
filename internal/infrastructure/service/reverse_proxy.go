@@ -6,7 +6,7 @@ import (
 	"github.com/graze/go-throttled"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/time/rate"
-	"io/ioutil"
+	"io"
 	"math"
 	"net/http"
 	"net/http/httputil"
@@ -87,9 +87,9 @@ func (s *ReverseProxyService) modifyRequest(cfg config.StartCommandConfig, req *
 		req.Header.Add(kv[0], kv[1])
 	}
 
-	sourceRequestBody, err := ioutil.ReadAll(req.Body)
+	sourceRequestBody, err := io.ReadAll(req.Body)
 	if err != nil {
-		s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(ioutil.ReadAll), err)
+		s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(io.ReadAll), err)
 		return
 	}
 	if err = req.Body.Close(); err != nil {
@@ -119,7 +119,7 @@ func (s *ReverseProxyService) modifyRequest(cfg config.StartCommandConfig, req *
 		s.logger.Debugf("ModifyRequestBody: %s", getChangesLogMessage(sourceRequestBody, modifiedRequestBody, jqExpr, cfg.TransformRequestBodySED))
 	}
 
-	req.Body = ioutil.NopCloser(bytes.NewBuffer(modifiedRequestBody))
+	req.Body = io.NopCloser(bytes.NewBuffer(modifiedRequestBody))
 	req.ContentLength = int64(len(modifiedRequestBody))
 }
 
@@ -144,9 +144,9 @@ func (s *ReverseProxyService) getReverseProxyByParams(cfg config.StartCommandCon
 
 func (s *ReverseProxyService) getModifyResponseFunc(cfg config.StartCommandConfig) func(resp *http.Response) error {
 	return func(resp *http.Response) error {
-		sourceResponseBody, err := ioutil.ReadAll(resp.Body)
+		sourceResponseBody, err := io.ReadAll(resp.Body)
 		if err != nil {
-			s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(ioutil.ReadAll), err)
+			s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(io.ReadAll), err)
 			return nil
 		}
 		if err = resp.Body.Close(); err != nil {
@@ -178,9 +178,9 @@ func (s *ReverseProxyService) getModifyResponseFunc(cfg config.StartCommandConfi
 
 		buf := bytes.NewBufferString("")
 		buf.Write(modifiedResponseBody)
-		resp.Body = ioutil.NopCloser(buf)
+		resp.Body = io.NopCloser(buf)
 
-		resp.Body = ioutil.NopCloser(bytes.NewBuffer(modifiedResponseBody))
+		resp.Body = io.NopCloser(bytes.NewBuffer(modifiedResponseBody))
 		resp.Header["Content-Length"] = []string{strconv.Itoa(len(modifiedResponseBody))}
 		resp.ContentLength = int64(len(modifiedResponseBody))
 
