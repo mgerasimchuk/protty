@@ -7,5 +7,7 @@ import (
 
 func main() {
 	cfg := config.GetStartCommandConfig()
-	app.Start(cfg)
+	prottyApp := app.NewProttyApp(cfg)
+	// Ignore error cos it handles by cobra
+	_ = prottyApp.Start()
 }

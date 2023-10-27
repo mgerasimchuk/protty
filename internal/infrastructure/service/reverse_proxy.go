@@ -2,6 +2,7 @@ package service
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"github.com/graze/go-throttled"
 	"github.com/sirupsen/logrus"
@@ -18,6 +19,7 @@ import (
 )
 
 type ReverseProxyService struct {
+	srv            *http.Server
 	reverseProxies map[string]*httputil.ReverseProxy
 	cfg            *config.StartCommandConfig
 	logger         *logrus.Logger
@@ -31,10 +33,20 @@ func NewReverseProxyService(logger *logrus.Logger) *ReverseProxyService {
 func (s *ReverseProxyService) Start(cfg *config.StartCommandConfig) error {
 	s.cfg = cfg
 
-	http.HandleFunc("/", s.handleRequestAndRedirect)
-
 	s.logger.Infof("Start listen proxy on :%d port with config: %+v", s.cfg.LocalPort.Value, s.cfg)
-	return http.ListenAndServe(fmt.Sprintf(":%d", s.cfg.LocalPort.Value), nil)
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", s.handleRequestAndRedirect)
+	s.srv = &http.Server{
+		Addr:    fmt.Sprintf(":%d", s.cfg.LocalPort.Value),
+		Handler: mux,
+	}
+	return s.srv.ListenAndServe()
+}
+
+func (s *ReverseProxyService) Stop(ctx context.Context) error {
+	s.logger.Infof("Stoping proxy")
+	return s.srv.Shutdown(ctx)
 }
 
 func (s *ReverseProxyService) handleRequestAndRedirect(res http.ResponseWriter, req *http.Request) {

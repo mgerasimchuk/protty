@@ -1,6 +1,3 @@
-[![Lint Golangci][lint-golangci-badge]][lint-golangci-url]
-[![Test Unit][test-unit-badge]][test-unit-url]
-
 # Protty
 
 ----
@@ -10,6 +7,10 @@
 </p>
 
 ----
+
+[![Lint Golangci](https://github.com/mgerasimchuk/protty/actions/workflows/lint-golangci.yml/badge.svg)](https://github.com/mgerasimchuk/protty/actions/workflows/lint-golangci.yml)
+[![Test Unit](https://github.com/mgerasimchuk/protty/actions/workflows/test-unit.yml/badge.svg)](https://github.com/mgerasimchuk/protty/actions/workflows/test-unit.yml)
+[![Lint Integration](https://github.com/mgerasimchuk/protty/actions/workflows/test-integration.yml/badge.svg)](https://github.com/mgerasimchuk/protty/actions/workflows/test-integration.yml)
 
 Protty is a HTTP proxy written in Go that redirects requests to a remote host.
 The proxy intercepts and processes the requests before forwarding them to the desired host, and then sends the response back to the user.
@@ -82,11 +83,3 @@ Flags:
 
 - SED implementation - https://github.com/rwtodd/Go.Sed/tree/ba3e9c1
 - JQ implementation - https://github.com/itchyny/gojq/tree/v0.12.11
-
-[lint-golangci-badge]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-golangci.yml/badge.svg
-
-[lint-golangci-url]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/lint-golangci.yml
-
-[test-unit-badge]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-unit.yml/badge.svg
-
-[test-unit-url]: https://github.com/mgerasimchuk/space-trouble/actions/workflows/test-unit.yml

@@ -1,4 +1,4 @@
-name: Test Unit
+name: Test Integration
 on: push
 
 jobs:
@@ -6,8 +6,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
-      - name: Test Unit
-        run: make test-unit
+      - name: Test Integration
+        run: make test-integration
 
 # TODO add coverage report after merging this MR: https://github.com/ncruces/go-coverage-report/pull/11
 #      - name: Coverage report

@@ -1,8 +1,10 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
+	"net/http"
 	"protty/internal/infrastructure/config"
 	"protty/internal/infrastructure/service"
 	"strings"
@@ -64,7 +66,10 @@ func (c *StartCommand) runE(cmd *cobra.Command, args []string) error {
 	if err := c.cfg.Validate(); err != nil {
 		return err
 	}
-	return c.reverseProxySvc.Start(c.cfg)
+	if err := c.reverseProxySvc.Start(c.cfg); !errors.Is(err, http.ErrServerClosed) {
+		return err
+	}
+	return nil
 }
 
 func (c *StartCommand) getExamples() string {
