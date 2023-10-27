@@ -8,12 +8,11 @@ jobs:
       - uses: actions/checkout@v3
       - name: Test Unit
         run: make test-unit
-
-# TODO add coverage report after merging this MR: https://github.com/ncruces/go-coverage-report/pull/11
-#      - name: Coverage report
-#        uses: ncruces/go-coverage-report@v0.2.7
-#        with:
-#          coverage-file: assets/coverage/unit.out
-#          report: true
-#          chart: true
-#          amend: true
+      - name: Coverage report
+        uses: mgerasimchuk/go-coverage-report@custom-report-path
+        with:
+          badge-title: Test Unit
+          coverage-file: assets/coverage/unit/coverage.out
+          report: true
+          report-path: assets/coverage/unit
+          chart: true

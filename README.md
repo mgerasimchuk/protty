@@ -9,12 +9,16 @@
 ----
 
 [![Lint Golangci](https://github.com/mgerasimchuk/protty/actions/workflows/lint-golangci.yml/badge.svg)](https://github.com/mgerasimchuk/protty/actions/workflows/lint-golangci.yml)
-[![Test Unit](https://github.com/mgerasimchuk/protty/actions/workflows/test-unit.yml/badge.svg)](https://github.com/mgerasimchuk/protty/actions/workflows/test-unit.yml)
-[![Lint Integration](https://github.com/mgerasimchuk/protty/actions/workflows/test-integration.yml/badge.svg)](https://github.com/mgerasimchuk/protty/actions/workflows/test-integration.yml)
+[![Test Unit Coverage](https://github.com/mgerasimchuk/protty/wiki/assets/coverage/unit/coverage.svg)](https://github.com/mgerasimchuk/protty/wiki/Test-coverage-report)
+[![Test Integration Coverage](https://github.com/mgerasimchuk/protty/wiki/assets/coverage/integration/coverage.svg)](https://github.com/mgerasimchuk/protty/wiki/Test-coverage-report)
 
-Protty is a HTTP proxy written in Go that redirects requests to a remote host.
-The proxy intercepts and processes the requests before forwarding them to the desired host, and then sends the response back to the user.
-In addition to proxying requests, Protty also offers features such as throttling requests to control the rate at which requests are sent, and intercepting and modifying the request and response body to add or modify data(in the nearest future release).
+
+Protty is an HTTP proxy written in Go that redirects, intercepts, and modifies both requests to a remote host and their
+corresponding responses.
+The proxy intercepts and processes the requests before forwarding them to the desired host, and then changed the
+responses and sends back to the user.
+In addition to proxying requests, Protty also offers features such as throttling requests to control the rate at which
+requests are sent.
 These capabilities make Protty a useful tool for a variety of purposes, such as testing applications, debugging network issues, or adding custom functionality to HTTP traffic.
 
 ## Usage

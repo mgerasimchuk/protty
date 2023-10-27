@@ -2,18 +2,17 @@ name: Test Integration
 on: push
 
 jobs:
-  test-unit:
+  test-integration:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - name: Test Integration
         run: make test-integration
-
-# TODO add coverage report after merging this MR: https://github.com/ncruces/go-coverage-report/pull/11
-#      - name: Coverage report
-#        uses: ncruces/go-coverage-report@v0.2.7
-#        with:
-#          coverage-file: assets/coverage/unit.out
-#          report: true
-#          chart: true
-#          amend: true
+      - name: Coverage report
+        uses: mgerasimchuk/go-coverage-report@custom-report-path
+        with:
+          badge-title: Test Integration
+          coverage-file: assets/coverage/integration/coverage.out
+          report: true
+          report-path: assets/coverage/integration
+          chart: true
