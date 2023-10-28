@@ -9,9 +9,10 @@
 ----
 
 [![Lint Golangci](https://github.com/mgerasimchuk/protty/actions/workflows/lint-golangci.yml/badge.svg)](https://github.com/mgerasimchuk/protty/actions/workflows/lint-golangci.yml)
-[![Test Unit Coverage](https://github.com/mgerasimchuk/protty/wiki/assets/coverage/unit/coverage.svg)](https://github.com/mgerasimchuk/protty/wiki/Test-coverage-report)
-[![Test Integration Coverage](https://github.com/mgerasimchuk/protty/wiki/assets/coverage/integration/coverage.svg)](https://github.com/mgerasimchuk/protty/wiki/Test-coverage-report)
-
+[![Test Unit](https://github.com/mgerasimchuk/protty/actions/workflows/test-unit.yml/badge.svg)](https://github.com/mgerasimchuk/protty/actions/workflows/test-unit.yml)
+[![Coverage (unit)](https://github.com/mgerasimchuk/protty/wiki/assets/coverage/unit/coverage.svg)](https://github.com/mgerasimchuk/protty/wiki/Test-coverage-report)
+[![Test Integration](https://github.com/mgerasimchuk/protty/actions/workflows/test-integration.yml/badge.svg)](https://github.com/mgerasimchuk/protty/actions/workflows/test-integration.yml)
+[![Coverage (integration)](https://github.com/mgerasimchuk/protty/wiki/assets/coverage/integration/coverage.svg)](https://github.com/mgerasimchuk/protty/wiki/Test-coverage-report)
 
 Protty is an HTTP proxy written in Go that redirects, intercepts, and modifies both requests to a remote host and their
 corresponding responses.

@@ -11,7 +11,7 @@ jobs:
       - name: Coverage report
         uses: mgerasimchuk/go-coverage-report@custom-report-path
         with:
-          badge-title: Test Integration
+          badge-title: Coverage (integration)
           coverage-file: assets/coverage/integration/coverage.out
           report: true
           report-path: assets/coverage/integration
