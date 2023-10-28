@@ -14,5 +14,5 @@ jobs:
           badge-title: Coverage (integration)
           coverage-file: assets/coverage/integration/coverage.out
           report: true
-          report-path: assets/coverage/integration
+          output-path: assets/coverage/integration
           chart: true

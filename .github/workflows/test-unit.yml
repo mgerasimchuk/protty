@@ -14,5 +14,5 @@ jobs:
           badge-title: Coverage (unit)
           coverage-file: assets/coverage/unit/coverage.out
           report: true
-          report-path: assets/coverage/unit
+          output-path: assets/coverage/unit
           chart: true

@@ -7,14 +7,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/gavv/httpexpect/v2"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
 	"os"
-	"protty/internal/infrastructure/app/mock"
 	"protty/internal/infrastructure/config"
 	"testing"
+	"time"
 )
 
 func TestStartCommand(t *testing.T) {
@@ -71,12 +70,16 @@ func TestStartCommand(t *testing.T) {
 			cfg := config.GetStartCommandConfig()
 			prottyApp := NewProttyApp(cfg)
 			prottyApp.logger.SetOutput(io.Discard)
-			logrusHook := mock.NewLogrusHook([]logrus.Level{logrus.InfoLevel}, 50)
-			prottyApp.logger.Hooks.Add(logrusHook)
 			go func() { assert.NoError(t, prottyApp.Start()) }()
 
 			// waiting for the first info message from logger as a signal that the proxy is ready to handle requests
-			<-logrusHook.EntryChan()
+			for i := 0; i < 5; i++ {
+				_, err := http.Get("http://0.0.0.0:80")
+				if err == nil {
+					break
+				}
+				time.Sleep(50 * time.Millisecond)
+			}
 
 			// test
 			e := httpexpect.Default(t, fmt.Sprintf("http://0.0.0.0:%d", cfg.LocalPort.Value))
