@@ -9,10 +9,10 @@ jobs:
       - name: Test Integration
         run: make test-integration
       - name: Coverage report
-        uses: ncruces/go-coverage-report@f1283391eaeaf8137046f83ab02c890c4719f643
+        uses: ncruces/go-coverage-report@57ac6f0f19874f7afbab596105154f08004f482e
         with:
           badge-title: Coverage (integration)
           coverage-file: assets/coverage/integration/coverage.out
           report: true
-          output-path: assets/coverage/integration
+          output-dir: assets/coverage/integration
           chart: true
