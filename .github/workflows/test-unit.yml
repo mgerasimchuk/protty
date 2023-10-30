@@ -9,7 +9,7 @@ jobs:
       - name: Test Unit
         run: make test-unit
       - name: Coverage report
-        uses: mgerasimchuk/go-coverage-report@custom-report-path
+        uses: ncruces/go-coverage-report@f1283391eaeaf8137046f83ab02c890c4719f643
         with:
           badge-title: Coverage (unit)
           coverage-file: assets/coverage/unit/coverage.out

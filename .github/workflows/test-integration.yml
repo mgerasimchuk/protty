@@ -9,7 +9,7 @@ jobs:
       - name: Test Integration
         run: make test-integration
       - name: Coverage report
-        uses: mgerasimchuk/go-coverage-report@custom-report-path
+        uses: ncruces/go-coverage-report@f1283391eaeaf8137046f83ab02c890c4719f643
         with:
           badge-title: Coverage (integration)
           coverage-file: assets/coverage/integration/coverage.out
