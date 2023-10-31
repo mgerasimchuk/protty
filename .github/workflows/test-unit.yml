@@ -9,10 +9,11 @@ jobs:
       - name: Test Unit
         run: make test-unit
       - name: Coverage report
-        uses: ncruces/go-coverage-report@57ac6f0f19874f7afbab596105154f08004f482e
+        uses: mgerasimchuk/go-coverage-report@chart-diff-only
         with:
           badge-title: Coverage (unit)
           coverage-file: assets/coverage/unit/coverage.out
           report: true
           output-dir: assets/coverage/unit
           chart: true
+          chart-show-diff-only: true

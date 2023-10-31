@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/itchyny/gojq"
+	"reflect"
 )
 
 // JQ transform the input by jq expression
@@ -36,9 +37,14 @@ func JQ(jqExpr string, input []byte) ([]byte, []byte, error) {
 		}
 		transformed = v
 	}
-	transformedJSON, err := json.Marshal(transformed)
-	if err != nil {
-		return input, input, fmt.Errorf("%s: %w", GetFuncName(json.Marshal), err)
+	var transformedJSON []byte
+	if reflect.TypeOf(transformed).Kind() == reflect.Map {
+		transformedJSON, err = json.Marshal(transformed)
+		if err != nil {
+			return input, input, fmt.Errorf("%s: %w", GetFuncName(json.Marshal), err)
+		}
+	} else {
+		transformedJSON = []byte(fmt.Sprintf("%v", transformed))
 	}
 
 	return transformedJSON, input, nil

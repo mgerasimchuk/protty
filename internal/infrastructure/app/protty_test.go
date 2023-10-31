@@ -50,6 +50,11 @@ func TestStartCommand(t *testing.T) {
 			args{targetPath: "/", targetResponseBody: "ok", prottyFlags: append(prottyStart, "--transform-response-body-sed", "s|ok|changed|g")},
 			want{responseBody: "changed"},
 		},
+		{
+			"Flags configuration JQ expression",
+			args{targetPath: "/", targetResponseBody: `{"code": 100, "message": "message body"}`, prottyFlags: append(prottyStart, "--transform-response-body-jq", ".message")},
+			want{responseBody: "message body"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
