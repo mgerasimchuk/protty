@@ -30,6 +30,10 @@ The following command will start a proxy on port 8080, and after starting, all t
 docker run -p8080:80 -e REMOTE_URI=https://example.com:443 mgerasimchuk/protty:v0.4.4
 ```
 
+## Supported Backends
+
+- Docker - https://hub.docker.com/r/mgerasimchuk/protty
+
 ## Running options and runtime configuration
 
 ```
