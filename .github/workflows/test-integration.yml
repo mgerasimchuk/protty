@@ -1,4 +1,4 @@
-name: Test Integration
+name: Test (integration)
 on: push
 
 jobs:
@@ -9,11 +9,10 @@ jobs:
       - name: Test Integration
         run: make test-integration
       - name: Coverage report
-        uses: mgerasimchuk/go-coverage-report@chart-diff-only
+        uses: ncruces/go-coverage-report@v0.2.9
         with:
           badge-title: Coverage (integration)
           coverage-file: assets/coverage/integration/coverage.out
           report: true
           output-dir: assets/coverage/integration
           chart: true
-          chart-show-diff-only: true
