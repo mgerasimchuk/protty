@@ -16,9 +16,9 @@ import (
 )
 
 type StartCommandConfig struct {
-	LogLevel                  Option[string]   `default:"debug" description:"On which host, the throttle rate limit should be applied"`
-	LocalPort                 Option[int]      `default:"80" description:"Verbosity level (panic, fatal, error, warn, info, debug, trace)"`
-	RemoteURI                 Option[string]   `default:"https://example.com:443" description:"Listening port for the proxy"`
+	LogLevel                  Option[string]   `default:"debug" description:"Verbosity level (panic, fatal, error, warn, info, debug, trace)"`
+	LocalPort                 Option[int]      `default:"80" description:"Listening port for the proxy"`
+	RemoteURI                 Option[string]   `default:"https://example.com:443" description:"URI of the remote resource"`
 	ThrottleRateLimit         Option[float64]  `description:"How many requests can be send to the remote resource per second"`
 	TransformRequestUrlSED    Option[string]   `description:"SED expression for request URL transformation"`
 	AdditionalRequestHeaders  Option[[]string] `description:"Array of additional request headers in format Header: Value"`
