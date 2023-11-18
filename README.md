@@ -29,7 +29,7 @@ These capabilities make Protty a useful tool for a variety of purposes, such as 
 The following command will start a proxy on port 8080, and after starting, all traffic from port 8080 will be redirected to a remote host located at https://example.com
 
 ```shell
-docker run -p8080:80 -e REMOTE_URI=https://example.com:443 mgerasimchuk/protty:v0.4.5
+docker run -p8080:80 -e REMOTE_URI=https://example.com:443 mgerasimchuk/protty:v0.4.6
 ```
 
 ## Supported Backends
@@ -39,7 +39,7 @@ docker run -p8080:80 -e REMOTE_URI=https://example.com:443 mgerasimchuk/protty:v
 ## Running options and runtime configuration
 
 ```
-» ~  docker run -p8080:80 -it mgerasimchuk/protty:v0.4.5 /bin/sh -c 'protty start --help'  
+» ~  docker run -p8080:80 -it mgerasimchuk/protty:v0.4.6 /bin/sh -c 'protty start --help'  
 Start the proxy
 
 Usage:
