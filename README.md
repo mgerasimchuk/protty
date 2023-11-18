@@ -24,6 +24,10 @@ In addition to proxying requests, Protty also offers features such as throttling
 requests are sent.
 These capabilities make Protty a useful tool for a variety of purposes, such as testing applications, debugging network issues, or adding custom functionality to HTTP traffic.
 
+<p align="center">
+  <img alt="How it works" src="https://github.com/mgerasimchuk/protty/raw/master/assets/readme/how-it-works.png"/>
+</p>
+
 ## Usage
 
 The following command will start a proxy on port 8080, and after starting, all traffic from port 8080 will be redirected to a remote host located at https://example.com
