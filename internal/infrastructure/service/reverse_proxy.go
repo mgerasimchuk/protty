@@ -5,6 +5,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/graze/go-throttled"
+	"github.com/mgerasimchuk/protty/internal/infrastructure/config"
+	"github.com/mgerasimchuk/protty/pkg/util"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/time/rate"
 	"io"
@@ -12,8 +14,6 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"protty/internal/infrastructure/config"
-	"protty/pkg/util"
 	"strconv"
 	"strings"
 )

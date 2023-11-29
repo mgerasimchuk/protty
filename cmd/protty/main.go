@@ -1,8 +1,8 @@
 package main
 
 import (
-	"protty/internal/infrastructure/app"
-	"protty/internal/infrastructure/config"
+	"github.com/mgerasimchuk/protty/internal/infrastructure/app"
+	"github.com/mgerasimchuk/protty/internal/infrastructure/config"
 )
 
 func main() {

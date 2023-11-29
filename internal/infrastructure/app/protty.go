@@ -2,10 +2,10 @@ package app
 
 import (
 	"context"
+	"github.com/mgerasimchuk/protty/internal/adapter/cli"
+	"github.com/mgerasimchuk/protty/internal/infrastructure/config"
+	"github.com/mgerasimchuk/protty/internal/infrastructure/service"
 	"github.com/sirupsen/logrus"
-	"protty/internal/adapter/cli"
-	"protty/internal/infrastructure/config"
-	"protty/internal/infrastructure/service"
 )
 
 type ProttyApp struct {

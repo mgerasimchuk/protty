@@ -1,4 +1,4 @@
-module protty
+module github.com/mgerasimchuk/protty
 
 go 1.20
 

@@ -1,7 +1,7 @@
 package config
 
 import (
-	"protty/pkg/util"
+	"github.com/mgerasimchuk/protty/pkg/util"
 	"strings"
 )
 

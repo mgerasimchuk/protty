@@ -7,11 +7,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/gavv/httpexpect/v2"
+	"github.com/mgerasimchuk/protty/internal/infrastructure/config"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
 	"os"
-	"protty/internal/infrastructure/config"
 	"testing"
 	"time"
 )

@@ -3,10 +3,10 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"github.com/mgerasimchuk/protty/internal/infrastructure/config"
+	"github.com/mgerasimchuk/protty/internal/infrastructure/service"
 	"github.com/spf13/cobra"
 	"net/http"
-	"protty/internal/infrastructure/config"
-	"protty/internal/infrastructure/service"
 	"strings"
 	"text/template"
 )
