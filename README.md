@@ -9,10 +9,12 @@
 ----
 
 [![Release](https://img.shields.io/github/v/release/mgerasimchuk/protty)](https://github.com/mgerasimchuk/protty/releases)
-[![Docker pulls](https://img.shields.io/docker/pulls/mgerasimchuk/protty)](https://hub.docker.com/r/mgerasimchuk/protty)\
+[![Docker pulls](https://img.shields.io/docker/pulls/mgerasimchuk/protty)](https://hub.docker.com/r/mgerasimchuk/protty)
+[![Go Doc](https://godoc.org/github.com/mgerasimchuk/protty?status.png)](http://godoc.org/github.com/mgerasimchuk/protty)
+[![Go Report](https://goreportcard.com/badge/github.com/mgerasimchuk/protty)](https://goreportcard.com/report/github.com/mgerasimchuk/protty)
 [![Lint Golangci](https://github.com/mgerasimchuk/protty/actions/workflows/lint-golangci.yml/badge.svg)](https://github.com/mgerasimchuk/protty/actions/workflows/lint-golangci.yml)\
 [![Test (unit)](https://github.com/mgerasimchuk/protty/actions/workflows/test-unit.yml/badge.svg)](https://github.com/mgerasimchuk/protty/actions/workflows/test-unit.yml)
-[![Coverage (unit)](https://github.com/mgerasimchuk/protty/wiki/assets/coverage/unit/coverage.svg)](https://github.com/mgerasimchuk/protty/wiki/Test-coverage-report)\
+[![Coverage (unit)](https://github.com/mgerasimchuk/protty/wiki/assets/coverage/unit/coverage.svg)](https://github.com/mgerasimchuk/protty/wiki/Test-coverage-report)
 [![Test (integration)](https://github.com/mgerasimchuk/protty/actions/workflows/test-integration.yml/badge.svg)](https://github.com/mgerasimchuk/protty/actions/workflows/test-integration.yml)
 [![Coverage (integration)](https://github.com/mgerasimchuk/protty/wiki/assets/coverage/integration/coverage.svg)](https://github.com/mgerasimchuk/protty/wiki/Test-coverage-report)
 
