@@ -1,13 +1,9 @@
-# Protty
-
-----
-
-<p align="center">
+<h1 align="center">
   <img height="250" alt="PROTTY" src="https://github.com/mgerasimchuk/protty/raw/master/assets/logo/logo.png"/>
-</p>
+</h1>
 
-----
-
+<div align="center">
+  
 [![Release](https://img.shields.io/github/v/release/mgerasimchuk/protty)](https://github.com/mgerasimchuk/protty/releases)
 [![Docker pulls](https://img.shields.io/docker/pulls/mgerasimchuk/protty)](https://hub.docker.com/r/mgerasimchuk/protty)
 [![Go Doc](https://godoc.org/github.com/mgerasimchuk/protty?status.png)](http://godoc.org/github.com/mgerasimchuk/protty)
@@ -17,6 +13,8 @@
 [![Coverage (unit)](https://github.com/mgerasimchuk/protty/wiki/assets/coverage/unit/coverage.svg)](https://github.com/mgerasimchuk/protty/wiki/Test-coverage-report)
 [![Test (integration)](https://github.com/mgerasimchuk/protty/actions/workflows/test-integration.yml/badge.svg)](https://github.com/mgerasimchuk/protty/actions/workflows/test-integration.yml)
 [![Coverage (integration)](https://github.com/mgerasimchuk/protty/wiki/assets/coverage/integration/coverage.svg)](https://github.com/mgerasimchuk/protty/wiki/Test-coverage-report)
+
+</div>
 
 Protty is an HTTP proxy written in Go that redirects, intercepts, and modifies both requests to a remote host and their
 corresponding responses.
