@@ -4,11 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/graze/go-throttled"
-	"github.com/mgerasimchuk/protty/internal/infrastructure/config"
-	"github.com/mgerasimchuk/protty/pkg/util"
-	"github.com/sirupsen/logrus"
-	"golang.org/x/time/rate"
 	"io"
 	"math"
 	"net/http"
@@ -16,6 +11,12 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/graze/go-throttled"
+	"github.com/mgerasimchuk/protty/internal/infrastructure/config"
+	"github.com/mgerasimchuk/protty/pkg/util"
+	"github.com/sirupsen/logrus"
+	"golang.org/x/time/rate"
 )
 
 type ReverseProxyService struct {
@@ -63,26 +64,42 @@ func (s *ReverseProxyService) logRequestPayload(req *http.Request) {
 func (s *ReverseProxyService) serveReverseProxy(res http.ResponseWriter, req *http.Request) {
 	cfg := s.getOverrideConfig(req)
 	reverseProxy := s.getReverseProxyByParams(*cfg)
-	s.modifyRequest(*cfg, req)
-	reverseProxy.ServeHTTP(res, req)
+	modifiedReq := s.getModifiedRequest(*cfg, req)
+
+	reverseProxy.ServeHTTP(res, modifiedReq)
 }
 
-func (s *ReverseProxyService) modifyRequest(cfg config.StartCommandConfig, req *http.Request) {
+func (s *ReverseProxyService) getModifiedRequest(cfg config.StartCommandConfig, req *http.Request) *http.Request {
+	modifiedReq, err := http.NewRequest(req.Method, req.RequestURI, req.Body)
+	if err != nil {
+		s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(http.NewRequest), err)
+		return req
+	}
+
+	for headerKey, headerValues := range req.Header {
+		headerKey = strings.ToLower(headerKey)
+		if headerKey == "accept-encoding" || // Skipping encoding to keep availability for changing response (for example in case of using gzip, we would not be able to make a replacing in response body)
+			strings.HasPrefix(headerKey, "x-protty-") { // Skipping x-protty-* headers cos they need only for protty
+			continue
+		}
+		for _, headerValue := range headerValues {
+			modifiedReq.Header.Add(headerKey, headerValue)
+		}
+	}
+
 	host := strings.ReplaceAll(strings.ReplaceAll(cfg.RemoteURI.Value, "https://", ""), "http://", "")
-	req.Host, req.URL.Host = host, host
-	// Deleting encoding to keep availability for changing response
-	req.Header.Del("Accept-Encoding")
+	modifiedReq.Host, modifiedReq.URL.Host = host, host
 
 	// Transform request URL
 	if cfg.TransformRequestUrlSED.Value != "" {
-		if modifiedURLRaw, _, err := util.SED(cfg.TransformRequestUrlSED.Value, []byte(req.URL.String())); err == nil {
-			sourceURLRaw := req.URL.String()
+		if modifiedURLRaw, _, err := util.SED(cfg.TransformRequestUrlSED.Value, []byte(modifiedReq.URL.String())); err == nil {
+			sourceURLRaw := modifiedReq.URL.String()
 			if modifiedURL, err := url.Parse(strings.Trim(string(modifiedURLRaw), "\n")); err == nil { // TODO remove trim (currently it is a hotfix, cos the util.SED added \n at the end unexpectedly)
-				req.URL = modifiedURL
+				modifiedReq.URL = modifiedURL
 				s.logger.Debugf("ModifyRequestURL: %s", getChangesLogMessage([]byte(sourceURLRaw), modifiedURLRaw, cfg.TransformRequestUrlSED.Value, cfg.TransformRequestUrlSED))
 			} else {
 				s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(url.Parse), err)
-				return
+				return req
 			}
 		} else {
 			s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(util.SED), err)
@@ -96,17 +113,17 @@ func (s *ReverseProxyService) modifyRequest(cfg config.StartCommandConfig, req *
 			s.logger.Errorf("%s: %s: %s - %+v", util.GetCurrentFuncName(), util.GetFuncName(strings.SplitN), "returns not 2 values", kv)
 			continue
 		}
-		req.Header.Add(kv[0], kv[1])
+		modifiedReq.Header.Add(kv[0], kv[1])
 	}
 
-	sourceRequestBody, err := io.ReadAll(req.Body)
+	sourceRequestBody, err := io.ReadAll(modifiedReq.Body)
 	if err != nil {
 		s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(io.ReadAll), err)
-		return
+		return req
 	}
-	if err = req.Body.Close(); err != nil {
-		s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(req.Body.Close), err)
-		return
+	if err = modifiedReq.Body.Close(); err != nil {
+		s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(modifiedReq.Body.Close), err)
+		return req
 	}
 
 	modifiedRequestBody := sourceRequestBody
@@ -116,7 +133,7 @@ func (s *ReverseProxyService) modifyRequest(cfg config.StartCommandConfig, req *
 		modifiedRequestBody, sourceRequestBody, err = util.SED(sedExpr, modifiedRequestBody)
 		if err != nil {
 			s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(util.SED), err)
-			return
+			return req
 		}
 		s.logger.Debugf("ModifyRequestBody: %s", getChangesLogMessage(sourceRequestBody, modifiedRequestBody, sedExpr, cfg.TransformRequestBodySED))
 	}
@@ -126,13 +143,15 @@ func (s *ReverseProxyService) modifyRequest(cfg config.StartCommandConfig, req *
 		modifiedRequestBody, sourceRequestBody, err = util.JQ(jqExpr, modifiedRequestBody)
 		if err != nil {
 			s.logger.Errorf("%s: %s: %s", util.GetCurrentFuncName(), util.GetFuncName(util.JQ), err)
-			return
+			return req
 		}
 		s.logger.Debugf("ModifyRequestBody: %s", getChangesLogMessage(sourceRequestBody, modifiedRequestBody, jqExpr, cfg.TransformRequestBodySED))
 	}
 
-	req.Body = io.NopCloser(bytes.NewBuffer(modifiedRequestBody))
-	req.ContentLength = int64(len(modifiedRequestBody))
+	modifiedReq.Body = io.NopCloser(bytes.NewBuffer(modifiedRequestBody))
+	modifiedReq.ContentLength = int64(len(modifiedRequestBody))
+
+	return modifiedReq
 }
 
 func (s *ReverseProxyService) getReverseProxyByParams(cfg config.StartCommandConfig) *httputil.ReverseProxy {
