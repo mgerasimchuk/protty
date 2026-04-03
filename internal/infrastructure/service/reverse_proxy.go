@@ -56,7 +56,7 @@ func (s *ReverseProxyService) handleRequestAndRedirect(res http.ResponseWriter, 
 }
 
 func (s *ReverseProxyService) logRequestPayload(req *http.Request) {
-	s.logger.WithField("method", req.Method).WithField("path", req.URL.Path).Infof("Request have been sent to %s", req.URL.Host)
+	s.logger.WithField("method", req.Method).WithField("path", req.URL.Path).WithField("query", req.URL.RawQuery).Infof("Request have been sent to %s", req.URL.Host)
 	// TODO add tracing log with body and other params like headers
 }
 
